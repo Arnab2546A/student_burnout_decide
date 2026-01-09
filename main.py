@@ -1,11 +1,13 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.tree import DecisionTreeClassifier
 
 # 1. Load the dataset
 # Ensure the file is in the same folder as your script
@@ -74,32 +76,60 @@ print(f"Total samples: {len(df)}")
 print(f"Training set: {X_train_scaled.shape[0]} samples")
 print(f"Testing set: {X_test_scaled.shape[0]} samples")
 
-# 1. Initialize the Model
-# n_estimators=100 means we are using 100 small decision trees working together
-model = RandomForestClassifier(n_estimators=100, random_state=42)
+# 2. MODEL 1: RANDOM FOREST (RF)
+# 100 decision trees combined
+# ==========================================
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train_scaled, y_train)
+rf_pred = rf_model.predict(X_test_scaled)
+rf_acc = accuracy_score(y_test, rf_pred)
+# 3. MODEL 2: DECISION TREE (DT)
+# ==========================================
+dt_model = DecisionTreeClassifier(random_state=42)
+dt_model.fit(X_train_scaled, y_train)
+dt_pred = dt_model.predict(X_test_scaled)
+dt_acc = accuracy_score(y_test, dt_pred)
 
-# 2. Train the Model
-# We use the scaled training data
-model.fit(X_train_scaled, y_train)
+# 4. COMPARISON & EVALUATION
+# ==========================================
+print("\n" + "="*30)
+print(f"Random Forest Accuracy: {rf_acc * 100:.2f}%")
+print(f"Decision Tree Accuracy: {dt_acc * 100:.2f}%")
+print("="*30)
 
-# 3. Make Predictions
-# We ask the model to predict stress levels for the test data it hasn't seen
-y_pred = model.predict(X_test_scaled)
+# Determine the winner
+if rf_acc > dt_acc:
+    print("\nWINNER: Random Forest is more accurate!")
+    best_model = rf_model
+    best_preds = rf_pred
+else:
+    print("\nWINNER: Decision Tree is more accurate!")
+    best_model = dt_model
+    best_preds = dt_pred
 
-# 4. Evaluate the Model
-accuracy = accuracy_score(y_test, y_pred)
-print("\n--- Model Evaluation ---")
-print(f"Accuracy Score: {accuracy * 100:.2f}%")
+# Show Detailed Report for the Best Model
+print(f"\nDetailed Report for the Best Model:")
+print(classification_report(y_test, best_preds))
 
-# Detailed Report (Precision, Recall, F1-Score)
-print("\nClassification Report:")
-print(classification_report(y_test, y_pred))
+# 5. VISUALIZATION
+# ==========================================
 
-# 5. Visualization: Confusion Matrix
-# This shows exactly where the model made mistakes (e.g., predicting 1 when it was 2)
+# Plot 1: Confusion Matrix for Best Model
 plt.figure(figsize=(8, 6))
-sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d', cmap='Blues')
-plt.title('Confusion Matrix: Predicted vs Actual')
-plt.xlabel('Predicted Stress Level')
-plt.ylabel('Actual Stress Level')
+sns.heatmap(confusion_matrix(y_test, best_preds), annot=True, fmt='d', cmap='Greens')
+plt.title('Confusion Matrix (Best Model)')
+plt.xlabel('Predicted Label')
+plt.ylabel('Actual Label')
+plt.show()
+
+# Plot 2: Feature Importance (What causes the most stress?)
+importances = best_model.feature_importances_
+indices = np.argsort(importances)
+
+plt.figure(figsize=(10, 8))
+plt.title('Top Factors Driving Student Burnout')
+plt.barh(range(len(indices)), importances[indices], color='salmon', align='center')
+plt.yticks(range(len(indices)), [X.columns[i] for i in indices])
+plt.xlabel('Importance Score')
+plt.tight_layout()
 plt.show()
