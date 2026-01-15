@@ -86,7 +86,7 @@ const App = () => {
         formData.extracurricular_activities, formData.bullying
       ];
       
-      const response = await fetch('https://yourusername.pythonanywhere.com/predict', {
+      const response = await fetch('https://Arnab2546A.pythonanywhere.com/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ features: featureArray }),
