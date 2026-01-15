@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-
+import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
@@ -133,3 +133,9 @@ plt.yticks(range(len(indices)), [X.columns[i] for i in indices])
 plt.xlabel('Importance Score')
 plt.tight_layout()
 plt.show()
+
+# 1. Save the winner model
+joblib.dump(best_model, 'burnout_model.pkl')
+# 2. Save the scaler (ESSENTIAL for preprocessing new inputs)
+joblib.dump(scaler, 'scaler.pkl')
+print("Model and Scaler saved successfully!")
