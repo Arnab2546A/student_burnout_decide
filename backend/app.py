@@ -49,5 +49,9 @@ def predict():
         print(f"Error occurred: {e}")
         return jsonify({'error': str(e)}), 400
 
+@app.route('/')
+def health_check():
+    return jsonify({'status': 'ok', 'message': 'Backend is running'})
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

@@ -86,7 +86,7 @@ const App = () => {
         formData.extracurricular_activities, formData.bullying
       ];
       
-      const response = await fetch('https://student-burnout-decide-1.onrender.com/predict', {
+      const response = await fetch('https://yourusername.pythonanywhere.com/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ features: featureArray }),
