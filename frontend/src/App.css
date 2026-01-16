@@ -1,1 +1,130 @@
 @import "tailwindcss";
+
+/* Mobile Performance Optimizations */
+@media (max-width: 768px) {
+  /* Reduce animations on mobile */
+  * {
+    animation-duration: 0.3s !important;
+  }
+  
+  /* Hardware acceleration for transforms */
+  .animate-slide-up,
+  .animate-fade-in,
+  .animate-pulse,
+  .animate-float,
+  .animate-bounce-in {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform, opacity;
+  }
+  
+  /* Disable expensive filters on mobile */
+  .blur-3xl {
+    filter: blur(40px) !important;
+  }
+  
+  .blur-2xl {
+    filter: blur(20px) !important;
+  }
+}
+
+/* Optimize animations */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes result-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0) translateZ(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-5px) translateZ(0);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(5px) translateZ(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateZ(0);
+  }
+  50% {
+    transform: translateY(-10px) translateZ(0);
+  }
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0) translateZ(0);
+  }
+  50% {
+    transform: scale(1.1) translateZ(0);
+  }
+  100% {
+    transform: scale(1) translateZ(0);
+  }
+}
+
+/* Hardware acceleration for all animated elements */
+.animate-slide-up {
+  animation: slide-up 0.6s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+.animate-result-appear {
+  animation: result-appear 0.5s ease-out;
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.6s ease-out;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

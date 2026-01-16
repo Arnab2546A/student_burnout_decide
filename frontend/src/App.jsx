@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo, memo } from 'react';
 
 // 1. Define the valid ranges based on your dataset
 const RANGES = {
@@ -38,15 +38,14 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState([]); // To track which fields are invalid
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     // Allow empty string or convert to number, handling leading zeros
-    if (value === '') {
-      setFormData({ ...formData, [name]: '' });
-    } else {
-      setFormData({ ...formData, [name]: Number(value) });
-    }
-  };
+    setFormData(prev => ({
+      ...prev,
+      [name]: value === '' ? '' : Number(value)
+    }));
+  }, []);
 
   const handlePredict = async (e) => {
     e.preventDefault();
@@ -99,21 +98,24 @@ const App = () => {
     setLoading(false);
   };
 
-  const getResultColor = () => {
+  const getResultColor = useMemo(() => {
     if (prediction === 0) return "text-green-800 bg-green-100 border-green-500";
     if (prediction === 1) return "text-yellow-800 bg-yellow-100 border-yellow-500";
     if (prediction === 2) return "text-red-800 bg-red-100 border-red-500";
     return "";
-  };
+  }, [prediction]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-950 to-slate-950 py-12 px-4 font-sans relative overflow-hidden">
-      {/* Animated Gaming Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/2 left-1/3 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
-        <div className="absolute bottom-1/3 right-1/4 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1.5s'}}></div>
+      {/* Animated Gaming Background Elements - Optimized for mobile */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-cyan-500/10 rounded-full md:blur-3xl blur-2xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-blue-500/10 rounded-full md:blur-3xl blur-2xl animate-pulse" style={{animationDelay: '1s'}}></div>
+      </div>
+      {/* Mobile-optimized background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none md:hidden">
+        <div className="absolute top-20 left-10 w-64 h-64 bg-cyan-500/5 rounded-full blur-xl"></div>
+        <div className="absolute bottom-20 right-10 w-64 h-64 bg-blue-500/5 rounded-full blur-xl"></div>
       </div>
       
       <div className="max-w-7xl mx-auto relative z-10">
@@ -121,38 +123,23 @@ const App = () => {
         {/* Hero Header */}
         <div className="text-center mb-6 md:mb-10 animate-fade-in px-2">
           <div className="relative inline-block">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-wide leading-tight">
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}>B</span>
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}>U</span>
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}>R</span>
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}>N</span>
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}>O</span>
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}>U</span>
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}>T</span>
-              <span className="mx-2 md:mx-3 inline-block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}> </span>
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-teal-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}>C</span>
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-teal-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}>A</span>
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-teal-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}>L</span>
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-teal-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}>C</span>
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-teal-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}>U</span>
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-teal-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}>L</span>
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-teal-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}>A</span>
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-teal-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}>T</span>
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-teal-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}>O</span>
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-teal-400 animate-gradient" style={{animation: 'simple-glow 3s ease-in-out infinite'}}>R</span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-wide leading-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400">
+              <span className="block sm:inline">BURNOUT</span>
+              <span className="hidden sm:inline"> </span>
+              <span className="block sm:inline">CALCULATOR</span>
             </h1>
-            <div className="absolute inset-0 blur-2xl bg-gradient-to-r from-emerald-400/20 via-teal-400/20 to-cyan-400/20 animate-pulse -z-10"></div>
+            <div className="absolute inset-0 md:blur-2xl blur-lg bg-gradient-to-r from-emerald-400/20 via-teal-400/20 to-cyan-400/20 md:animate-pulse -z-10"></div>
           </div>
         </div>
 
         {/* Main Card */}
-        <div className="bg-gradient-to-br from-gray-950/95 to-black/95 backdrop-blur-2xl shadow-[0_0_60px_rgba(0,0,0,0.8)] rounded-3xl overflow-hidden border-4 border-cyan-500/30 hover:border-cyan-400/50 hover:shadow-[0_0_80px_rgba(6,182,212,0.4)] transition-all duration-500 animate-slide-up" style={{animation: 'slide-up 0.6s ease-out, glow-pulse 4s ease-in-out infinite'}}>
+        <div className="bg-gradient-to-br from-gray-950/95 to-black/95 md:backdrop-blur-2xl backdrop-blur-sm md:shadow-[0_0_60px_rgba(0,0,0,0.8)] shadow-[0_0_30px_rgba(0,0,0,0.6)] rounded-3xl overflow-hidden border-4 border-cyan-500/30 md:hover:border-cyan-400/50 md:hover:shadow-[0_0_80px_rgba(6,182,212,0.4)] transition-all duration-300 animate-slide-up">
 
         {/* --- ERROR DISPLAY --- */}
         {formErrors.length > 0 && (
-          <div className="m-4 md:m-8 p-4 md:p-6 bg-gradient-to-r from-red-950/80 to-orange-950/80 border-l-4 border-red-600 rounded-2xl shadow-[0_0_40px_rgba(220,38,38,0.4)] backdrop-blur-sm animate-shake">
+          <div className="m-4 md:m-8 p-4 md:p-6 bg-gradient-to-r from-red-950/80 to-orange-950/80 border-l-4 border-red-600 rounded-2xl md:shadow-[0_0_40px_rgba(220,38,38,0.4)] shadow-[0_0_20px_rgba(220,38,38,0.3)] md:backdrop-blur-sm backdrop-blur-none animate-shake">
             <div className="flex items-start gap-2 md:gap-3">
-              <div className="flex-shrink-0 w-12 h-12 md:w-14 md:h-14 bg-red-600 rounded-full flex items-center justify-center animate-bounce shadow-[0_0_20px_rgba(220,38,38,0.6)]">
+              <div className="flex-shrink-0 w-12 h-12 md:w-14 md:h-14 bg-red-600 rounded-full flex items-center justify-center md:animate-bounce md:shadow-[0_0_20px_rgba(220,38,38,0.6)]">
                 <span className="text-white text-2xl md:text-3xl">⚠️</span>
               </div>
               <div className="flex-1">
@@ -203,7 +190,7 @@ const App = () => {
           </div>
 
           {/* Environmental Section */}
-          <div className="bg-gradient-to-br from-gray-950/80 to-black/80 p-6 sm:p-8 rounded-3xl border-4 border-cyan-500/30 shadow-[0_0_40px_rgba(6,182,212,0.3)] backdrop-blur-sm hover:border-cyan-400/40 hover:shadow-[0_0_60px_rgba(6,182,212,0.4)] transition-all duration-500 hover:scale-[1.02] animate-slide-up" style={{animationDelay: '400ms'}}>
+          <div className="bg-gradient-to-br from-gray-950/80 to-black/80 p-6 sm:p-8 rounded-3xl border-4 border-cyan-500/30 md:shadow-[0_0_40px_rgba(6,182,212,0.3)] shadow-[0_0_20px_rgba(6,182,212,0.2)] md:backdrop-blur-sm md:hover:border-cyan-400/40 md:hover:shadow-[0_0_60px_rgba(6,182,212,0.4)] transition-all duration-300 md:hover:scale-[1.02] animate-slide-up" style={{animationDelay: '400ms'}}>
             <div className="mb-6 flex flex-col sm:flex-row items-center justify-center text-center gap-3">
               <span className="text-3xl sm:text-4xl md:text-5xl animate-float">🌍</span>
               <h3 className="text-xl sm:text-2xl md:text-2xl font-black uppercase tracking-wider drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] bg-gradient-to-r from-cyan-400 to-blue-400 text-transparent bg-clip-text">
@@ -223,12 +210,9 @@ const App = () => {
             <button 
               type="submit" 
               disabled={loading}
-              className="max-w-xs bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 text-white px-8 md:px-10 py-4 md:py-5 rounded-full font-bold text-lg md:text-xl shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-300 transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group border-2 border-cyan-400/30 hover:border-emerald-400"
-              style={{backgroundSize: '200% 100%'}}
-              onMouseEnter={(e) => e.currentTarget.style.animation = 'button-glow-pulse 0.6s ease-out'}
-              onMouseLeave={(e) => e.currentTarget.style.animation = ''}
+              className="max-w-xs bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 text-white px-8 md:px-10 py-4 md:py-5 rounded-full font-bold text-lg md:text-xl md:shadow-[0_0_30px_rgba(6,182,212,0.4)] shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all duration-200 transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group border-2 border-cyan-400/30 md:hover:border-emerald-400"
             >
-            <span className="relative z-10 tracking-wide drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">
+            <span className="relative z-10 tracking-wide md:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
                   <svg className="animate-spin h-5 w-5 md:h-6 md:w-6" viewBox="0 0 24 24">
@@ -244,14 +228,13 @@ const App = () => {
                 </span>
               )}
             </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div className="absolute inset-0 animate-pulse-glow"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 opacity-0 md:group-hover:opacity-100 transition-opacity duration-300"></div>
             </button>
           </div>
         </form>
 
         {prediction !== null && (
-          <div className={`mx-4 md:mx-8 mb-8 p-6 md:p-8 rounded-2xl border-2 text-center shadow-[0_0_40px_rgba(0,0,0,0.4)] transition-all duration-500 transform hover:scale-[1.02] animate-result-appear ${getResultColor()}`}>
+          <div className={`mx-4 md:mx-8 mb-8 p-6 md:p-8 rounded-2xl border-2 text-center md:shadow-[0_0_40px_rgba(0,0,0,0.4)] shadow-[0_0_20px_rgba(0,0,0,0.3)] transition-all duration-300 md:transform md:hover:scale-[1.02] animate-result-appear ${getResultColor}`}>
             <div className="space-y-3 md:space-y-4">
               <div className="text-5xl md:text-6xl mb-3 animate-bounce-in">
                 {prediction === 0 && "✅"}
@@ -285,8 +268,8 @@ const App = () => {
   );
 };
 
-const Section = ({ title, icon, color, delay, children }) => (
-  <div className="bg-gradient-to-br from-gray-950/95 to-black/95 rounded-2xl p-5 md:p-6 shadow-[0_0_40px_rgba(0,0,0,0.8)] border-3 border-cyan-500/20 hover:border-cyan-400/40 hover:shadow-[0_0_60px_rgba(6,182,212,0.3)] transition-all duration-500 hover:scale-[1.05] animate-slide-up" style={{animationDelay: `${delay}ms`}}>
+const Section = memo(({ title, icon, color, delay, children }) => (
+  <div className="bg-gradient-to-br from-gray-950/95 to-black/95 rounded-2xl p-5 md:p-6 md:shadow-[0_0_40px_rgba(0,0,0,0.8)] shadow-[0_0_20px_rgba(0,0,0,0.6)] border-3 border-cyan-500/20 md:hover:border-cyan-400/40 md:hover:shadow-[0_0_60px_rgba(6,182,212,0.3)] transition-all duration-300 md:hover:scale-[1.05] animate-slide-up" style={{animationDelay: `${delay}ms`}}>
     <div className="mb-4 flex flex-col items-center justify-center text-center">
       <div className="flex items-center justify-center gap-3 mb-3">
         <span className="text-3xl sm:text-4xl md:text-5xl animate-float">{icon}</span>
@@ -299,12 +282,12 @@ const Section = ({ title, icon, color, delay, children }) => (
       {children}
     </div>
   </div>
-);
+));
 
-const Input = ({ label, name, val, onChange, isInvalid }) => (
+const Input = memo(({ label, name, val, onChange, isInvalid }) => (
   <div className="flex flex-col group">
     <label className={`text-xs sm:text-sm font-black uppercase mb-2 ml-1 tracking-wider transition-colors ${
-      isInvalid ? 'text-red-400 animate-pulse' : 'text-gray-400 group-focus-within:text-cyan-400'
+      isInvalid ? 'text-red-400 md:animate-pulse' : 'text-gray-400 group-focus-within:text-cyan-400'
     }`}>
       {label}
     </label>
@@ -315,11 +298,11 @@ const Input = ({ label, name, val, onChange, isInvalid }) => (
       onChange={onChange}
       className={`bg-gradient-to-br from-gray-950 to-black border-3 p-4 rounded-xl outline-none font-bold text-lg md:text-xl text-white transition-all duration-200 ${
         isInvalid 
-          ? 'border-red-500 bg-red-950/30 shadow-[0_0_30px_rgba(220,38,38,0.6)] animate-pulse' 
-          : 'border-cyan-500/30 focus:border-cyan-400 focus:shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:border-cyan-400/50 hover:bg-gray-900'
+          ? 'border-red-500 bg-red-950/30 md:shadow-[0_0_30px_rgba(220,38,38,0.6)] shadow-[0_0_15px_rgba(220,38,38,0.4)] md:animate-pulse' 
+          : 'border-cyan-500/30 focus:border-cyan-400 md:focus:shadow-[0_0_30px_rgba(6,182,212,0.4)] focus:shadow-[0_0_15px_rgba(6,182,212,0.3)] md:hover:border-cyan-400/50 md:hover:bg-gray-900'
       }`}
     />
   </div>
-);
+));
 
 export default App;
