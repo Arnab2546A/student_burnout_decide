@@ -72,6 +72,7 @@ const App = () => {
     }
 
     setFormErrors([]); // Clear errors if validation passes
+    setPrediction(null); // Clear old result before fetching new one
     setLoading(true);
     
     try {
